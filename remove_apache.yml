@@ -1,0 +1,20 @@
+---
+- hosts: all
+  become: true
+
+  tasks:
+    - name: update cache
+      yum:
+        update_cache: yes
+
+    - name: Remove Apache
+      yum:
+        name: httpd
+        state: absent
+    
+    - name: remove PHP support for Apache
+      yum:
+        name:
+          - php
+          - php-cli
+        state: absent

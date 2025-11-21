@@ -1,0 +1,35 @@
+---
+- hosts: all
+  become: true
+
+  tasks:
+    - name: Install Apache
+      yum:
+        name: httpd
+        state: present
+
+    - name: Update cache
+      yum:
+        update_cache: yes
+
+    - name: Add PHP support for Apache
+      yum:
+        name:
+          - php
+          - php-cli
+          - php-mysqlnd
+        state: present
+
+    - name: Test Apache configuration
+      command: httpd -t
+      register: apache_configtest
+      changed_when: false
+      failed_when: apache_configtest.rc != 0
+
+    - name: Start and enable Apache
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+
+#ansible-playbook install_apache.yml --ask-become-pass
